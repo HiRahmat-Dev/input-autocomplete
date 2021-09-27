@@ -7,7 +7,7 @@ const rawCountries = fs.readFileSync("./country.json");
 const countries = JSON.parse(rawCountries);
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5500");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   next();
 });
 
