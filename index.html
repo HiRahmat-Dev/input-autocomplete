@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <style>
+      * {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .autocomplete-wrapper {
+        position: relative;
+      }
+      .autocomplete-wrapper > input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #bbb;
+        outline: none;
+        border-radius: 8px;
+        transition: 0.1s;
+      }
+      .autocomplete-wrapper > input:focus-visible {
+        box-shadow: 0 0 1px 2px #a9cbff;
+        border-color: #a9cbff;
+      }
+      .autocomplete-wrapper ul.list-wrapper {
+        position: absolute;
+        z-index: 1;
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+      }
+      ul.list-wrapper > li {
+        padding: 8px 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="autocomplete-wrapper">
+      <label for="autocomplete">Country</label>
+      <input id="autocomplete" />
+    </div>
+  </body>
+  <script>
+    async function fetchCountries(search) {
+      const response = await fetch(
+        "http://localhost:666/countries?search=" + search
+      );
+      const data = await response.json();
+      return data;
+    }
+    function debounce(callback, ms = 250) {
+      let timeout;
+      return args => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          callback(args);
+        }, ms);
+      };
+    }
+    function autoComplete(inputNode, callback) {
+      let isListWrapper = true;
+      inputNode.addEventListener("input", inputEvent => {
+        const { value: search } = inputEvent.target;
+        if (!isListWrapper) {
+        }
+      });
+      inputNode.addEventListener("blur", blurEvent => {
+        console.log("Blur input");
+        callback(blurEvent);
+      });
+    }
+    const debouncedFetchCountries = debounce(fetchCountries);
+
+    document.addEventListener("DOMContentLoaded", async event => {
+      const autocompleteInput = document.getElementById("autocomplete");
+      autoComplete(autocompleteInput, (e) => {
+        console.log(e);
+      });
+    });
+  </script>
+</html>
