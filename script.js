@@ -10,7 +10,7 @@ function debounce(callback, ms = 250) {
   let data = null;
   function callbackDebounced(args) {
     clearTimeout(timeout);
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       timeout = setTimeout(() => {
         data = callback(args);
         if (data) resolve(data);
@@ -24,21 +24,32 @@ const debouncedFetchCountries = debounce(fetchCountries);
 function autoComplete(inputNode, callback) {
   const autocompleteWrapper = document.querySelector(".autocomplete-wrapper");
   const ul = document.createElement("ul");
-  const li = document.createElement("li");
-  const exampleText = document.createTextNode("halo");
   ul.classList.add("list-wrapper");
-  li.classList.add("item-list");
 
   let isListWrapper = false;
   inputNode.addEventListener("input", async inputEvent => {
     const { value: search } = inputEvent.target;
-    const result = await debouncedFetchCountries(search);
-    console.log(result);
-    if (!isListWrapper) {
-      li.appendChild(exampleText);
-      ul.appendChild(li);
-      autocompleteWrapper.appendChild(ul);
-      isListWrapper = true;
+    let result = await debouncedFetchCountries(search);
+    if (result) {
+      const liEmpty = document.createElement("li");
+      liEmpty.appendChild(document.createTextNode("Kosong"));
+      // liEmpty.classList.add("item-list");
+      // liEmpty.classList.add("disabled");
+      const liItems = result?.length
+        ? result?.map((country, index) => {
+            const countryNameNode = document.createTextNode(country.name);
+            const li = document.createElement("li");
+            li.classList.add("item-list");
+            li.dataset.listItem = "item-" + (index + 1);
+            li.appendChild(countryNameNode);
+            return li;
+          })
+        : [liEmpty];
+      ul.replaceChildren(...liItems);
+      if (!isListWrapper) {
+        autocompleteWrapper.appendChild(ul);
+        isListWrapper = true;
+      }
     }
   });
   document.addEventListener("click", docEvent => {

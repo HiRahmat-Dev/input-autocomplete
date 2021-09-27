@@ -20,7 +20,7 @@ app.get("/countries", (req, res) => {
   let data = [];
   if (search) {
     data = countries.filter(country =>
-      country.name.toLowerCase().includes(search)
+      country.name.toLowerCase().includes(`${search}`.toLowerCase())
     );
   } else data = countries;
   res.json(data);
