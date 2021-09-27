@@ -3,6 +3,10 @@
 }
 .autocomplete-wrapper {
   position: relative;
+  display: inline-block;
+}
+.autocomplete-wrapper > label {
+  display: block;
 }
 .autocomplete-wrapper > input {
   width: 100%;
@@ -36,4 +40,8 @@ ul.list-wrapper > li {
 }
 ul.list-wrapper > li:hover {
   background-color: #eee;
+}
+li.item-list.disabled {
+  cursor: not-allowed;
+  color: #888;
 }

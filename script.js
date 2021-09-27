@@ -32,9 +32,8 @@ function autoComplete(inputNode, callback) {
     let result = await debouncedFetchCountries(search);
     if (result) {
       const liEmpty = document.createElement("li");
-      liEmpty.appendChild(document.createTextNode("Kosong"));
-      // liEmpty.classList.add("item-list");
-      // liEmpty.classList.add("disabled");
+      liEmpty.appendChild(document.createTextNode(`tidak ditemukan hasil '${search}'`));
+      liEmpty.classList.add("item-list", "disabled");
       const liItems = result?.length
         ? result?.map((country, index) => {
             const countryNameNode = document.createTextNode(country.name);
@@ -66,6 +65,7 @@ function autoComplete(inputNode, callback) {
         inputNode.value = value;
         ul.remove();
         isListWrapper = false;
+        callback(value);
       }
     }
   });
@@ -73,5 +73,7 @@ function autoComplete(inputNode, callback) {
 
 document.addEventListener("DOMContentLoaded", async event => {
   const autocompleteInput = document.getElementById("autocomplete");
-  autoComplete(autocompleteInput, e => {});
+  autoComplete(autocompleteInput, value => {
+    console.log(value);
+  });
 });
