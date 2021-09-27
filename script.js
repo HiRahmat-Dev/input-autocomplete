@@ -14,23 +14,46 @@ function debounce(callback, ms = 250) {
     }, ms);
   };
 }
+const debouncedFetchCountries = debounce(fetchCountries);
 function autoComplete(inputNode, callback) {
-  let isListWrapper = true;
+  const autocompleteWrapper = document.querySelector(".autocomplete-wrapper");
+  const ul = document.createElement("ul");
+  const li = document.createElement("li");
+  const exampleText = document.createTextNode("halo");
+  ul.classList.add("list-wrapper");
+  li.classList.add("item-list");
+
+  let isListWrapper = false;
   inputNode.addEventListener("input", inputEvent => {
     const { value: search } = inputEvent.target;
+    const result = debouncedFetchCountries(search);
     if (!isListWrapper) {
+      li.appendChild(exampleText);
+      ul.appendChild(li);
+      autocompleteWrapper.appendChild(ul);
+      isListWrapper = true;
     }
   });
-  inputNode.addEventListener("blur", blurEvent => {
-    console.log("Blur input");
-    callback(blurEvent);
+  document.addEventListener("click", docEvent => {
+    if (isListWrapper) {
+      const isListItemClicked = docEvent?.target?.className === "item-list";
+      const isOutside = !(
+        isListItemClicked || docEvent?.target?.id === "autocomplete"
+      );
+      if (isOutside) {
+        ul.remove();
+        isListWrapper = false;
+      } else if (isListItemClicked) {
+        const value = docEvent?.target?.innerHTML ?? "";
+        inputNode.value = value;
+        ul.remove();
+        isListWrapper = false;
+      }
+    }
   });
 }
-const debouncedFetchCountries = debounce(fetchCountries);
 
 document.addEventListener("DOMContentLoaded", async event => {
   const autocompleteInput = document.getElementById("autocomplete");
-  autoComplete(autocompleteInput, e => {
-    console.log(e);
-  });
+  autoComplete(autocompleteInput, e => {});
 });
