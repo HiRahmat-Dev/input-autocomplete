@@ -7,12 +7,18 @@ async function fetchCountries(search) {
 }
 function debounce(callback, ms = 250) {
   let timeout;
-  return args => {
+  let data = null;
+  function callbackDebounced(args) {
     clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      callback(args);
-    }, ms);
-  };
+    return new Promise((resolve) => {
+      timeout = setTimeout(() => {
+        data = callback(args);
+        if (data) resolve(data);
+        else console.error(new Error(data));
+      }, ms);
+    });
+  }
+  return callbackDebounced;
 }
 const debouncedFetchCountries = debounce(fetchCountries);
 function autoComplete(inputNode, callback) {
@@ -24,9 +30,10 @@ function autoComplete(inputNode, callback) {
   li.classList.add("item-list");
 
   let isListWrapper = false;
-  inputNode.addEventListener("input", inputEvent => {
+  inputNode.addEventListener("input", async inputEvent => {
     const { value: search } = inputEvent.target;
-    const result = debouncedFetchCountries(search);
+    const result = await debouncedFetchCountries(search);
+    console.log(result);
     if (!isListWrapper) {
       li.appendChild(exampleText);
       ul.appendChild(li);
